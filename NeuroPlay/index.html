@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="NeuroPlay is an interactive playground for learning how a single perceptron turns inputs, weights, bias, and an activation function into an output.">
+  <title>NeuroPlay – Interactive Perceptron Playground</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b1220'/%3E%3Ccircle cx='16' cy='16' r='6' fill='none' stroke='%2322d3ee' stroke-width='2'/%3E%3Ccircle cx='6' cy='10' r='2' fill='%23a78bfa'/%3E%3Ccircle cx='6' cy='22' r='2' fill='%23a78bfa'/%3E%3Cpath d='M8 10 L13 15 M8 22 L13 18' stroke='%2322d3ee' stroke-width='1.5'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="#home">NeuroPlay <span aria-hidden="true">🧠</span></a>
+      <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-links">
+        <span class="sr-only">Open menu</span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </button>
+      <nav id="nav-links" class="nav-links" aria-label="Primary">
+        <a href="#home">Home</a>
+        <a href="#playground">Playground</a>
+        <a href="#learn">Learn</a>
+        <a href="#about">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="wrap hero-grid">
+        <div>
+          <p class="eyebrow">Interactive Perceptron Playground</p>
+          <h1>Understand Neural Networks, One Neuron at a Time.</h1>
+          <p class="lede">Experiment with inputs, weights, bias and activation functions to discover how a single perceptron makes predictions.</p>
+          <div class="hero-actions">
+            <a class="btn" href="#playground">Start Experimenting</a>
+            <a class="btn secondary" href="#learn">Read the ideas</a>
+          </div>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+          <svg viewBox="0 0 360 240">
+            <defs>
+              <linearGradient id="hero-line" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#22d3ee"/>
+                <stop offset="1" stop-color="#a78bfa"/>
+              </linearGradient>
+            </defs>
+            <line x1="70" y1="70" x2="170" y2="120" stroke="url(#hero-line)" stroke-width="3"/>
+            <line x1="70" y1="170" x2="170" y2="120" stroke="url(#hero-line)" stroke-width="3"/>
+            <line x1="196" y1="120" x2="250" y2="120" stroke="#67e8f9" stroke-width="3"/>
+            <circle cx="48" cy="70" r="22" fill="#102033" stroke="#22d3ee" stroke-width="2"/>
+            <circle cx="48" cy="170" r="22" fill="#102033" stroke="#22d3ee" stroke-width="2"/>
+            <circle cx="184" cy="120" r="28" fill="#171433" stroke="#a78bfa" stroke-width="2"/>
+            <rect x="250" y="92" width="78" height="56" rx="14" fill="#102033" stroke="#60a5fa" stroke-width="2"/>
+            <text x="48" y="75" text-anchor="middle" fill="#e7eefc" font-size="13">X1</text>
+            <text x="48" y="175" text-anchor="middle" fill="#e7eefc" font-size="13">X2</text>
+            <text x="184" y="126" text-anchor="middle" fill="#e7eefc" font-size="20">Σ</text>
+            <text x="289" y="124" text-anchor="middle" fill="#e7eefc" font-size="13">f(z)</text>
+          </svg>
+          <p>One weighted sum. One activation. One output.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="howto-title">
+      <div class="wrap">
+        <h2 id="howto-title">How to Use</h2>
+        <p class="section-intro">Change one control at a time and watch every panel update together. Nothing is saved, and the page does not reload.</p>
+        <ol class="how-grid">
+          <li>
+            <span>1</span>
+            <h3>Set the inputs</h3>
+            <p>X1 and X2 are the two numbers the perceptron is looking at right now.</p>
+          </li>
+          <li>
+            <span>2</span>
+            <h3>Set weights and bias</h3>
+            <p>Weights scale each input. Bias shifts the whole sum up or down.</p>
+          </li>
+          <li>
+            <span>3</span>
+            <h3>Choose an activation</h3>
+            <p>Step makes a yes or no. Sigmoid and ReLU keep more of the size of z.</p>
+          </li>
+          <li>
+            <span>4</span>
+            <h3>Read the picture</h3>
+            <p>Check the neuron diagram, the written steps, and the line where z equals 0.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section" id="playground" aria-labelledby="playground-title">
+      <div class="wrap">
+        <div class="section-heading">
+          <h2 id="playground-title">Perceptron Playground</h2>
+          <p class="section-intro">A single perceptron with two inputs. Move a slider or change the activation function and the weighted sum is recalculated immediately.</p>
+        </div>
+
+        <div class="playground-grid">
+          <div class="card controls">
+            <fieldset>
+              <legend>Inputs</legend>
+              <div class="control">
+                <div class="control-head">
+                  <label for="x1">Input X1</label>
+                  <output id="x1-value" for="x1">1</output>
+                </div>
+                <input id="x1" type="range" min="-5" max="5" step="0.1" value="1">
+                <div class="range-scale"><span>-5</span><span>5</span></div>
+              </div>
+              <div class="control">
+                <div class="control-head">
+                  <label for="x2">Input X2</label>
+                  <output id="x2-value" for="x2">2</output>
+                </div>
+                <input id="x2" type="range" min="-5" max="5" step="0.1" value="2">
+                <div class="range-scale"><span>-5</span><span>5</span></div>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Weights</legend>
+              <div class="control">
+                <div class="control-head">
+                  <label for="w1">Weight W1</label>
+                  <output id="w1-value" for="w1">0.5</output>
+                </div>
+                <input id="w1" type="range" min="-5" max="5" step="0.1" value="0.5">
+                <div class="range-scale"><span>-5</span><span>5</span></div>
+              </div>
+              <div class="control">
+                <div class="control-head">
+                  <label for="w2">Weight W2</label>
+                  <output id="w2-value" for="w2">1</output>
+                </div>
+                <input id="w2" type="range" min="-5" max="5" step="0.1" value="1">
+                <div class="range-scale"><span>-5</span><span>5</span></div>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Bias</legend>
+              <div class="control">
+                <div class="control-head">
+                  <label for="bias">Bias</label>
+                  <output id="bias-value" for="bias">-1</output>
+                </div>
+                <input id="bias" type="range" min="-5" max="5" step="0.1" value="-1">
+                <div class="range-scale"><span>-5</span><span>5</span></div>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Activation function</legend>
+              <div class="control">
+                <label class="select-label" for="activation">Selected function</label>
+                <select id="activation">
+                  <option value="step" selected>Step Function</option>
+                  <option value="sigmoid">Sigmoid Function</option>
+                  <option value="relu">ReLU Function</option>
+                </select>
+                <p id="activation-hint" class="hint">If z ≥ 0, output = 1. Otherwise output = 0.</p>
+              </div>
+            </fieldset>
+
+            <button type="button" class="btn secondary full" id="reset-btn">Reset</button>
+          </div>
+
+          <div class="card diagram-card">
+            <h3>Perceptron Visualization</h3>
+            <p class="hint">Cyan links are positive weights. Purple links are negative. A thicker link is a larger absolute weight. A dashed link means that weight is zero, so that input is ignored.</p>
+            <svg id="net-svg" viewBox="0 0 900 500" role="img" aria-labelledby="net-title">
+              <title id="net-title">Single perceptron diagram with current input, weight, bias, and output values</title>
+              <defs>
+                <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M 0 1.2 L 9 5 L 0 8.8 Z" fill="#dbeafe"/>
+                </marker>
+                <linearGradient id="input-fill" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#123044"/>
+                  <stop offset="100%" stop-color="#10192c"/>
+                </linearGradient>
+                <linearGradient id="sum-fill" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#241a42"/>
+                  <stop offset="100%" stop-color="#14182e"/>
+                </linearGradient>
+              </defs>
+
+              <line id="edge-w1" x1="168" y1="128" x2="372" y2="198" stroke="#22d3ee" stroke-width="3" stroke-linecap="round"/>
+              <line id="edge-w2" x1="168" y1="332" x2="372" y2="262" stroke="#22d3ee" stroke-width="4" stroke-linecap="round"/>
+              <line id="edge-bias" x1="430" y1="372" x2="430" y2="286" stroke="#c084fc" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)"/>
+              <line x1="486" y1="230" x2="568" y2="230" stroke="#dbeafe" stroke-width="2.5" marker-end="url(#arrow)"/>
+              <line x1="742" y1="230" x2="768" y2="230" stroke="#dbeafe" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+              <text id="viz-w1" class="edge-label" x="246" y="142" text-anchor="middle">W1 = 0.5</text>
+              <text id="viz-w2" class="edge-label" x="246" y="338" text-anchor="middle">W2 = 1</text>
+              <text id="viz-bias" class="edge-label" x="448" y="340">bias = -1</text>
+
+              <g class="node">
+                <circle cx="110" cy="128" r="48" fill="url(#input-fill)" stroke="#22d3ee" stroke-width="2.5"/>
+                <text x="110" y="122" text-anchor="middle" class="node-name">X1</text>
+                <text id="viz-x1" x="110" y="146" text-anchor="middle" class="node-value">1</text>
+              </g>
+              <g class="node">
+                <circle cx="110" cy="332" r="48" fill="url(#input-fill)" stroke="#22d3ee" stroke-width="2.5"/>
+                <text x="110" y="326" text-anchor="middle" class="node-name">X2</text>
+                <text id="viz-x2" x="110" y="350" text-anchor="middle" class="node-value">2</text>
+              </g>
+              <g class="node">
+                <circle cx="430" cy="230" r="54" fill="url(#sum-fill)" stroke="#a78bfa" stroke-width="2.5"/>
+                <text x="430" y="222" text-anchor="middle" class="sigma">Σ</text>
+                <text id="viz-z" x="430" y="250" text-anchor="middle" class="node-value">z = 1.5</text>
+              </g>
+              <g class="node">
+                <circle cx="430" cy="414" r="40" fill="#10192c" stroke="#c084fc" stroke-width="2.5"/>
+                <text x="430" y="420" text-anchor="middle" class="node-name">bias</text>
+              </g>
+              <g class="node">
+                <rect x="568" y="186" width="174" height="88" rx="18" fill="#10192c" stroke="#60a5fa" stroke-width="2.5"/>
+                <text x="655" y="220" text-anchor="middle" class="node-name">Activation</text>
+                <text id="viz-act" x="655" y="248" text-anchor="middle" class="node-value">Step</text>
+              </g>
+              <g class="node">
+                <circle id="viz-output-node" cx="820" cy="230" r="48" fill="#10192c" stroke="#34d399" stroke-width="3"/>
+                <text x="820" y="222" text-anchor="middle" class="node-name">Output</text>
+                <text id="viz-output" x="820" y="248" text-anchor="middle" class="node-value">1</text>
+              </g>
+            </svg>
+            <p class="diagram-caption">Left to right: input nodes, the summation node with its bias connection, the activation block, and the final output.</p>
+          </div>
+        </div>
+
+        <div class="card metrics-card">
+          <h3>Output</h3>
+          <p id="live-formula" class="formula-banner">z = (1 × 0.5) + (2 × 1) + (-1) = 1.5</p>
+          <p id="live-output-line" class="formula-result">Step(z) = 1</p>
+          <div class="metrics">
+            <div class="metric"><span>Input X1</span><strong id="metric-x1">1</strong></div>
+            <div class="metric"><span>Input X2</span><strong id="metric-x2">2</strong></div>
+            <div class="metric"><span>Weight W1</span><strong id="metric-w1">0.5</strong></div>
+            <div class="metric"><span>Weight W2</span><strong id="metric-w2">1</strong></div>
+            <div class="metric"><span>Bias</span><strong id="metric-bias">-1</strong></div>
+            <div class="metric"><span>Weighted Sum (z)</span><strong id="metric-z">1.5</strong></div>
+            <div class="metric"><span>Selected Activation Function</span><strong id="metric-activation">Step Function</strong></div>
+            <div class="metric emphasis positive" id="metric-output-card"><span>Final Output</span><strong id="metric-output" aria-live="polite">1</strong></div>
+          </div>
+        </div>
+
+        <div class="split">
+          <div class="stack">
+            <article class="card" id="formula" aria-labelledby="formula-title">
+              <h3 id="formula-title">The Perceptron Formula</h3>
+              <p>The neuron first builds a weighted sum, then passes that sum through an activation function. Written as symbols:</p>
+              <p class="formula-block"><code>z = (X1 × W1) + (X2 × W2) + bias</code><code>y = f(z)</code></p>
+              <dl class="defs">
+                <div>
+                  <dt>Step function</dt>
+                  <dd>If z ≥ 0, output = 1. Otherwise output = 0. When z is exactly 0, NeuroPlay follows this rule and returns 1.</dd>
+                </div>
+                <div>
+                  <dt>Sigmoid function</dt>
+                  <dd><code>1 / (1 + e<sup>−z</sup>)</code>. The result is always between 0 and 1. Large positive z moves toward 1, and large negative z moves toward 0.</dd>
+                </div>
+                <div>
+                  <dt>ReLU function</dt>
+                  <dd><code>max(0, z)</code>. Positive sums pass through unchanged. Zero and negative sums become 0.</dd>
+                </div>
+              </dl>
+            </article>
+
+            <article class="card" id="calculation" aria-labelledby="calc-title">
+              <h3 id="calc-title">Understand the Calculation</h3>
+              <p class="hint">These steps use the sliders above. Products are shown with ordinary decimal rounding, and z is the exact sum of those slider values.</p>
+              <ol class="calc-steps">
+                <li>
+                  <h4>Step 1: Multiply inputs by weights.</h4>
+                  <p id="explain-p1">X1 × W1 = 1 × 0.5 = 0.5</p>
+                  <p id="explain-p2">X2 × W2 = 2 × 1 = 2</p>
+                </li>
+                <li>
+                  <h4>Step 2: Add bias.</h4>
+                  <p id="explain-sum-line">z = 0.5 + 2 + (-1)</p>
+                  <p id="explain-z">z = 1.5</p>
+                </li>
+                <li>
+                  <h4>Step 3: Apply activation function.</h4>
+                  <p id="explain-act-title">Step Function:</p>
+                  <p id="explain-act-detail">Since z &gt;= 0, output = 1.</p>
+                  <p id="explain-plain" class="hint">The step function turns the weighted sum into a yes or no decision. One means class 1. Zero means class 0.</p>
+                </li>
+              </ol>
+            </article>
+          </div>
+
+          <article class="card boundary-card" id="boundary-card" data-mode="step" aria-labelledby="boundary-title">
+            <h3 id="boundary-title">Decision Boundary</h3>
+            <p id="boundary-equation" class="formula-banner">0.5·X1 + 1·X2 + (-1) = 0</p>
+            <div class="plot">
+              <canvas id="boundary-canvas" width="640" height="420" aria-label="Coordinate graph of X1 and X2 with the current input point and the line where the weighted sum is zero"></canvas>
+            </div>
+            <div id="boundary-legend" class="legend">
+              <span><i class="swatch swatch-on"></i> Output 1, where z ≥ 0</span>
+              <span><i class="swatch swatch-off"></i> Output 0, where z &lt; 0</span>
+              <span><i class="swatch swatch-point"></i> Current point (X1, X2)</span>
+            </div>
+            <p id="boundary-note">The step function classifies each point by the side of the line it falls on. Cyan is output 1. Purple is output 0. The white line is every point where the weighted sum equals zero.</p>
+            <p id="boundary-summary" class="sr-only">Horizontal axis X1, vertical axis X2, both from -5 to 5. Current point is (1, 2). Weighted sum is 1.5 and the step output is 1.</p>
+          </article>
+        </div>
+
+        <div class="examples" id="examples">
+          <h3>Try These Examples</h3>
+          <p class="section-intro">AND and OR are classic problems a single step perceptron can solve. Custom Experiment restores the starting sliders so you can explore freely.</p>
+          <div class="preset-grid">
+            <button type="button" class="preset-card" id="preset-and" data-preset="and">
+              <span class="kicker">Linearly separable</span>
+              <strong>AND Gate</strong>
+              <span>W1 = 1, W2 = 1, bias = -1.5, Step</span>
+            </button>
+            <button type="button" class="preset-card" id="preset-or" data-preset="or">
+              <span class="kicker">Linearly separable</span>
+              <strong>OR Gate</strong>
+              <span>W1 = 1, W2 = 1, bias = -0.5, Step</span>
+            </button>
+            <button type="button" class="preset-card is-active" id="preset-custom" data-preset="custom" aria-pressed="true">
+              <span class="kicker">Open exploration</span>
+              <strong>Custom Experiment</strong>
+              <span>X1 = 1, X2 = 2, W1 = 0.5, W2 = 1, bias = -1, Step</span>
+            </button>
+          </div>
+          <div class="card truth-card" id="truth-panel" hidden>
+            <h4 id="truth-caption">AND truth table</h4>
+            <p class="hint">Expected output is the logic gate. Current output uses your sliders and the selected activation. Choose Try to load that input pair.</p>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">X1</th>
+                    <th scope="col">X2</th>
+                    <th scope="col">Expected output</th>
+                    <th scope="col">Current output</th>
+                    <th scope="col">Load</th>
+                  </tr>
+                </thead>
+                <tbody id="truth-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="learn" aria-labelledby="learn-title">
+      <div class="wrap">
+        <h2 id="learn-title">Learn the Building Blocks</h2>
+        <p class="section-intro">The same five ideas show up in larger neural networks. Here they are visible one number at a time.</p>
+        <div class="learn-grid">
+          <article class="card learn-card">
+            <h3>What is a perceptron?</h3>
+            <p>A perceptron is a basic artificial neuron used for making predictions. It multiplies each input by a weight, adds a bias, and applies an activation function. Frank Rosenblatt described this model in the late 1950s. Networks used today still rely on this pattern, repeated across many units and layers.</p>
+          </article>
+          <article class="card learn-card">
+            <h3>What are inputs?</h3>
+            <p>X1 and X2 are the features of one example. For an AND gate they are the two bits, 0 or 1. In this playground they can be any value from -5 to 5, which makes the geometry easier to see. A real model might use hours studied and hours slept, or the width and height of an object. The neuron itself only sees numbers.</p>
+          </article>
+          <article class="card learn-card">
+            <h3>What are weights?</h3>
+            <p>Weights decide how important each input is, and whether it pushes the sum up or down. If W1 is large and positive, increasing X1 raises z a lot. If W1 is negative, increasing X1 lowers z. If W1 is 0, X1 does not affect the result. Training a network means adjusting weights. Here you edit them yourself so the effect stays obvious.</p>
+          </article>
+          <article class="card learn-card">
+            <h3>What is bias?</h3>
+            <p>Bias is a number added after the weighted inputs. It shifts the decision boundary. Without bias, the line z = 0 always passes through the origin, because zero inputs would always produce z = 0. A negative bias means the inputs must contribute enough positive signal to cross zero. That is why AND uses bias -1.5: one input alone is not enough.</p>
+            <svg class="mini-plot" viewBox="0 0 220 120" aria-hidden="true">
+              <line x1="20" y1="100" x2="200" y2="20" stroke="#22d3ee" stroke-width="2"/>
+              <line x1="20" y1="70" x2="200" y2="10" stroke="#a78bfa" stroke-width="2" stroke-dasharray="5 4"/>
+              <text x="24" y="18" fill="#b7c3dc" font-size="11">Solid: bias 0 through origin</text>
+              <text x="24" y="34" fill="#b7c3dc" font-size="11">Dashed: bias moves the line</text>
+            </svg>
+          </article>
+          <article class="card learn-card">
+            <h3>What is an activation function?</h3>
+            <p>The weighted sum is only a number. An activation function decides what the neuron reports. Step is a hard threshold, useful for a first look at binary classification. Sigmoid squashes z into a smooth score between 0 and 1. ReLU keeps positive values and blocks the rest. Nonlinear activations matter even more once several neurons are stacked, because they let later layers build curved patterns.</p>
+          </article>
+          <article class="card learn-card">
+            <h3>Limitations of a single perceptron</h3>
+            <p>A single perceptron with a step activation can solve linearly separable binary classification problems. AND and OR are separable: one straight line puts the output-1 points on one side and the output-0 points on the other. XOR is not. XOR is 1 only when the inputs differ, so the two positive cases sit on opposite corners. No single straight line can isolate both of them. Sigmoid and ReLU still depend on one linear sum, so one neuron of this kind cannot solve XOR either. XOR needs extra features or more than one layer.</p>
+            <svg class="xor-svg" viewBox="0 0 220 150" role="img" aria-label="XOR plotted on four corners. Matching inputs are class 0 and different inputs are class 1, which a single straight line cannot separate.">
+              <line x1="40" y1="20" x2="40" y2="120" stroke="#64748b"/>
+              <line x1="40" y1="120" x2="190" y2="120" stroke="#64748b"/>
+              <circle cx="70" cy="95" r="9" fill="#a78bfa"/>
+              <circle cx="160" cy="95" r="9" fill="#22d3ee"/>
+              <circle cx="70" cy="40" r="9" fill="#22d3ee"/>
+              <circle cx="160" cy="40" r="9" fill="#a78bfa"/>
+              <text x="78" y="99" fill="#e7eefc" font-size="11">(0, 0) → 0</text>
+              <text x="112" y="44" fill="#e7eefc" font-size="11">(1, 1) → 0</text>
+              <text x="78" y="36" fill="#e7eefc" font-size="11">(0, 1) → 1</text>
+              <text x="108" y="112" fill="#e7eefc" font-size="11">(1, 0) → 1</text>
+            </svg>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="about" aria-labelledby="about-title">
+      <div class="wrap about-grid">
+        <article class="card">
+          <h2 id="about-title">About NeuroPlay</h2>
+          <p>NeuroPlay is a teaching page for university students and beginners who want to see a single-layer perceptron calculate an output by hand, then on a graph. It shows two inputs, two weights, one bias, and one activation function. It does not train weights, load a dataset, or build a hidden layer.</p>
+          <p>Use it beside a lecture on linear separators. Set the AND or OR preset, click through the truth table, then change the bias and watch the boundary move. Switch to sigmoid or ReLU and compare a hard 0/1 decision with a graded output.</p>
+        </article>
+        <aside class="card disclaimer">
+          <h3>Educational simulation</h3>
+          <p>This is an educational simulation of one perceptron. It is not a medical, financial, or production machine-learning system, and the sliders are not learned from data. Calculations run locally in your browser.</p>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p><strong>NeuroPlay</strong> · Interactive Perceptron Playground</p>
+      <p>Educational simulation for learning how one artificial neuron computes an output.</p>
+    </div>
+  </footer>
+
+  <noscript>
+    <p class="noscript">NeuroPlay needs JavaScript enabled to calculate the perceptron and draw the graph.</p>
+  </noscript>
+</body>
+</html>
